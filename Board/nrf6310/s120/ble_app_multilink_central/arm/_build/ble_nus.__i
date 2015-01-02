@@ -1,0 +1,5 @@
+-c --cpu Cortex-M0 --li -g -O0 --apcs=interwork -I.. -I..\..\..\..\..\Include -I..\..\..\..\..\Include\app_common -I..\..\..\..\..\Include\ble -I..\..\..\..\..\Include\ble\device_manager -I..\..\..\..\..\Include\ble\ble_services -I..\..\..\..\..\Include\s120 -I..\..\..\..\..\include\boards -I..\..\..\..\..\include\sd_common -I..\..\..\..\..\Include\sdk --c99 
+-I C:\Keil\ARM\RV31\INC 
+-I C:\Keil\ARM\CMSIS\Include 
+-I C:\Keil\ARM\Device\Nordic\nRF51822\Include 
+-DNRF51 -DDEBUG_NRF_USER -DBLE_STACK_SUPPORT_REQD -DBOARD_NRF6310 -DENABLE_DEBUG_LOG_SUPPORT -o ".\_build\ble_nus.o" --omf_browse ".\_build\ble_nus.crf" --depend ".\_build\ble_nus.d" "..\ble_nus.c"

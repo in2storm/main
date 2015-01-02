@@ -1,0 +1,37 @@
+*** Creating Trace Output File '.\_build\ble_app_hrs_c.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\_build\arm_startup_nrf51.o"'
+### List of Objects: adding '".\_build\system_nrf51.o"'
+### List of Objects: adding '".\_build\main.o"'
+### List of Objects: adding '".\_build\ble_hrs_c.o"'
+### List of Objects: adding '".\_build\ble_bas_c.o"'
+### List of Objects: adding '".\_build\ble_nus.o"'
+### List of Objects: adding '".\_build\ble_debug_assert_handler.o"'
+### List of Objects: adding '".\_build\app_trace.o"'
+### List of Objects: adding '".\_build\simple_uart.o"'
+### List of Objects: adding '".\_build\nrf6350.o"'
+### List of Objects: adding '".\_build\twi_hw_master.o"'
+### List of Objects: adding '".\_build\pstorage.o"'
+### List of Objects: adding '".\_build\device_manager_central.o"'
+### List of Objects: adding '".\_build\app_button.o"'
+### List of Objects: adding '".\_build\app_gpiote.o"'
+### List of Objects: adding '".\_build\app_timer.o"'
+### List of Objects: adding '".\_build\softdevice_handler.o"'
+### List of Objects: adding '".\_build\ble_db_discovery.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M0 ".\_build\arm_startup_nrf51.o" ".\_build\system_nrf51.o" ".\_build\main.o" ".\_build\ble_hrs_c.o" ".\_build\ble_bas_c.o" ".\_build\ble_nus.o" ".\_build\ble_debug_assert_handler.o" ".\_build\app_trace.o" ".\_build\simple_uart.o" ".\_build\nrf6350.o" ".\_build\twi_hw_master.o" ".\_build\pstorage.o" ".\_build\device_manager_central.o" ".\_build\app_button.o" ".\_build\app_gpiote.o" ".\_build\app_timer.o" ".\_build\softdevice_handler.o" ".\_build\ble_db_discovery.o" 
+--strict --scatter ".\_build\ble_app_hrs_c.sct" 
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\_build\ble_app_hrs_c.map" -o .\_build\ble_app_hrs_c.axf### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\_build\ble_app_hrs_c.axf'
+### ADS-LD Command File: '.\_build\ble_app_hrs_c.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\_build\ble_app_hrs_c.lnp', Handle=0x00000610
+### Writing '.lnp' file
+### ADS-LD Command file '.\_build\ble_app_hrs_c.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

@@ -1,0 +1,32 @@
+*** Creating Trace Output File '.\_build\ble_app_multilink_central.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\_build\arm_startup_nrf51.o"'
+### List of Objects: adding '".\_build\system_nrf51.o"'
+### List of Objects: adding '".\_build\main.o"'
+### List of Objects: adding '".\_build\client_handling.o"'
+### List of Objects: adding '".\_build\ble_srv_common.o"'
+### List of Objects: adding '".\_build\ble_nus.o"'
+### List of Objects: adding '".\_build\ble_debug_assert_handler.o"'
+### List of Objects: adding '".\_build\app_trace.o"'
+### List of Objects: adding '".\_build\simple_uart.o"'
+### List of Objects: adding '".\_build\device_manager_central.o"'
+### List of Objects: adding '".\_build\pstorage.o"'
+### List of Objects: adding '".\_build\ble_db_discovery.o"'
+### List of Objects: adding '".\_build\softdevice_handler.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M0 ".\_build\arm_startup_nrf51.o" ".\_build\system_nrf51.o" ".\_build\main.o" ".\_build\client_handling.o" ".\_build\ble_srv_common.o" ".\_build\ble_nus.o" ".\_build\ble_debug_assert_handler.o" ".\_build\app_trace.o" ".\_build\simple_uart.o" ".\_build\device_manager_central.o" ".\_build\pstorage.o" ".\_build\ble_db_discovery.o" ".\_build\softdevice_handler.o" 
+--strict --scatter ".\_build\ble_app_multilink_central.sct" 
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\_build\ble_app_multilink_central.map" -o .\_build\ble_app_multilink_central.axf### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\_build\ble_app_multilink_central.axf'
+### ADS-LD Command File: '.\_build\ble_app_multilink_central.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\_build\ble_app_multilink_central.lnp', Handle=0x000003CC
+### Writing '.lnp' file
+### ADS-LD Command file '.\_build\ble_app_multilink_central.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

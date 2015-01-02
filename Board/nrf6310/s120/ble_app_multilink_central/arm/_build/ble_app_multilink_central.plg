@@ -1,0 +1,228 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+E:\Gtron_BLE_module\nrf51822_6_1_0\Board\nrf6310\s120\ble_app_multilink_central\arm\ble_app_multilink_central.uvproj
+Project File Date:  12/30/2014
+
+<h2>Output:</h2>
+Load "E:\\Gtron_BLE_module\\nrf51822_6_1_0\\Board\\nrf6310\\s120\\ble_app_multilink_central\\arm\\_build\\ble_app_multilink_central.AXF" 
+Set JLink Project File to "E:\Gtron_BLE_module\nrf51822_6_1_0\Board\nrf6310\s120\ble_app_multilink_central\arm\JLinkSettings.ini"
+* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
+ 
+JLink info:
+------------
+DLL: V4.92 , compiled Sep 30 2014 09:33:42
+Firmware: J-Link Lite-Cortex-M V8 compiled Jul 17 2014 11:40:12
+Hardware: V8.00
+S/N : 518107637 
+Feature(s) : GDB 
+ 
+* JLink Info: Found SWD-DP with ID 0x0BB11477
+* JLink Info: Found Cortex-M0 r0p0, Little endian.
+* JLink Info: FPUnit: 4 code (BP) slots and 0 literal slots
+ROMTableAddr = 0xE00FF003
+ 
+Target info:
+------------
+Device: nRF51822_xxAA
+VTarget = 3.261V
+State of Pins: 
+TCK: 0, TDI: 0, TDO: 1, TMS: 1, TRES: 1, TRST: 1
+Hardware-Breakpoints: 4
+Software-Breakpoints: 8192
+Watchpoints:          2
+JTAG speed: 1000 kHz
+ 
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...
+Build target 'nrf51822_xxaa_s120 (256K)'
+compiling main.c...
+..\main.c(485): warning:  #177-D: function "buttons_init" was declared but never referenced
+compiling app_trace.c...
+compiling ble_db_discovery.c...
+linking...
+Program Size: Code=17960 RO-data=844 RW-data=88 ZI-data=5968  
+FromELF: creating hex file...
+".\_build\ble_app_multilink_central.axf" - 0 Error(s), 1 Warning(s).
+Build target 'nrf51822_xxaa_s120 (256K)'
+compiling device_manager_central.c...
+linking...
+Program Size: Code=23484 RO-data=1724 RW-data=88 ZI-data=5968  
+FromELF: creating hex file...
+".\_build\ble_app_multilink_central.axf" - 0 Error(s), 0 Warning(s).
+Load "E:\\Gtron_BLE_module\\nrf51822_6_1_0\\Board\\nrf6310\\s120\\ble_app_multilink_central\\arm\\_build\\ble_app_multilink_central.AXF" 
+Set JLink Project File to "E:\Gtron_BLE_module\nrf51822_6_1_0\Board\nrf6310\s120\ble_app_multilink_central\arm\JLinkSettings.ini"
+* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
+ 
+JLink info:
+------------
+DLL: V4.92 , compiled Sep 30 2014 09:33:42
+Firmware: J-Link Lite-Cortex-M V8 compiled Jul 17 2014 11:40:12
+Hardware: V8.00
+S/N : 518107637 
+Feature(s) : GDB 
+ 
+* JLink Info: Found SWD-DP with ID 0x0BB11477
+* JLink Info: Found Cortex-M0 r0p0, Little endian.
+* JLink Info: FPUnit: 4 code (BP) slots and 0 literal slots
+ROMTableAddr = 0xE00FF003
+ 
+Target info:
+------------
+Device: nRF51822_xxAA
+VTarget = 3.261V
+State of Pins: 
+TCK: 0, TDI: 0, TDO: 1, TMS: 1, TRES: 1, TRST: 1
+Hardware-Breakpoints: 4
+Software-Breakpoints: 8192
+Watchpoints:          2
+JTAG speed: 1000 kHz
+ 
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...
+Build target 'nrf51822_xxaa_s120 (256K)'
+compiling main.c...
+..\main.c(525): error:  #20: identifier "APP_IRQ_PRIORITY_LOW" is undefined
+..\main.c(536): warning:  #223-D: function "simple_uart_put" declared implicitly
+..\main.c(536): warning:  #223-D: function "simple_uart_get" declared implicitly
+..\main.c(485): warning:  #177-D: function "buttons_init" was declared but never referenced
+Target not created
+Build target 'nrf51822_xxaa_s120 (256K)'
+compiling main.c...
+..\main.c(537): warning:  #223-D: function "simple_uart_put" declared implicitly
+..\main.c(537): warning:  #223-D: function "simple_uart_get" declared implicitly
+..\main.c(486): warning:  #177-D: function "buttons_init" was declared but never referenced
+linking...
+Program Size: Code=23644 RO-data=1724 RW-data=88 ZI-data=5968  
+FromELF: creating hex file...
+".\_build\ble_app_multilink_central.axf" - 0 Error(s), 3 Warning(s).
+Build target 'nrf51822_xxaa_s120 (256K)'
+compiling main.c...
+..\main.c(487): warning:  #177-D: function "buttons_init" was declared but never referenced
+linking...
+Program Size: Code=23648 RO-data=1724 RW-data=88 ZI-data=5968  
+FromELF: creating hex file...
+".\_build\ble_app_multilink_central.axf" - 0 Error(s), 1 Warning(s).
+Build target 'nrf51822_xxaa_s120 (256K)'
+compiling main.c...
+..\main.c(488): warning:  #177-D: function "buttons_init" was declared but never referenced
+linking...
+Program Size: Code=23652 RO-data=1724 RW-data=88 ZI-data=5968  
+FromELF: creating hex file...
+".\_build\ble_app_multilink_central.axf" - 0 Error(s), 1 Warning(s).
+Load "E:\\Gtron_BLE_module\\nrf51822_6_1_0\\Board\\nrf6310\\s120\\ble_app_multilink_central\\arm\\_build\\ble_app_multilink_central.AXF" 
+Set JLink Project File to "E:\Gtron_BLE_module\nrf51822_6_1_0\Board\nrf6310\s120\ble_app_multilink_central\arm\JLinkSettings.ini"
+* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
+ 
+JLink info:
+------------
+DLL: V4.92 , compiled Sep 30 2014 09:33:42
+Firmware: J-Link Lite-Cortex-M V8 compiled Jul 17 2014 11:40:12
+Hardware: V8.00
+S/N : 518107637 
+Feature(s) : GDB 
+ 
+* JLink Info: Found SWD-DP with ID 0x0BB11477
+* JLink Info: Found Cortex-M0 r0p0, Little endian.
+* JLink Info: FPUnit: 4 code (BP) slots and 0 literal slots
+ROMTableAddr = 0xE00FF003
+ 
+Target info:
+------------
+Device: nRF51822_xxAA
+VTarget = 3.261V
+State of Pins: 
+TCK: 0, TDI: 0, TDO: 1, TMS: 1, TRES: 1, TRST: 1
+Hardware-Breakpoints: 4
+Software-Breakpoints: 8192
+Watchpoints:          2
+JTAG speed: 1000 kHz
+ 
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...
+Build target 'nrf51822_xxaa_s120 (256K)'
+compiling main.c...
+..\main.c(488): warning:  #177-D: function "buttons_init" was declared but never referenced
+compiling ble_db_discovery.c...
+linking...
+Program Size: Code=23556 RO-data=1724 RW-data=88 ZI-data=5968  
+FromELF: creating hex file...
+".\_build\ble_app_multilink_central.axf" - 0 Error(s), 1 Warning(s).
+Load "E:\\Gtron_BLE_module\\nrf51822_6_1_0\\Board\\nrf6310\\s120\\ble_app_multilink_central\\arm\\_build\\ble_app_multilink_central.AXF" 
+Set JLink Project File to "E:\Gtron_BLE_module\nrf51822_6_1_0\Board\nrf6310\s120\ble_app_multilink_central\arm\JLinkSettings.ini"
+* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
+ 
+JLink info:
+------------
+DLL: V4.92 , compiled Sep 30 2014 09:33:42
+Firmware: J-Link Lite-Cortex-M V8 compiled Jul 17 2014 11:40:12
+Hardware: V8.00
+S/N : 518107637 
+Feature(s) : GDB 
+ 
+* JLink Info: Found SWD-DP with ID 0x0BB11477
+* JLink Info: Found Cortex-M0 r0p0, Little endian.
+* JLink Info: FPUnit: 4 code (BP) slots and 0 literal slots
+ROMTableAddr = 0xE00FF003
+ 
+Target info:
+------------
+Device: nRF51822_xxAA
+VTarget = 3.261V
+State of Pins: 
+TCK: 0, TDI: 0, TDO: 1, TMS: 1, TRES: 1, TRST: 1
+Hardware-Breakpoints: 4
+Software-Breakpoints: 8192
+Watchpoints:          2
+JTAG speed: 1000 kHz
+ 
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...
+Build target 'nrf51822_xxaa_s120 (256K)'
+compiling device_manager_central.c...
+linking...
+Program Size: Code=18032 RO-data=844 RW-data=88 ZI-data=5968  
+FromELF: creating hex file...
+".\_build\ble_app_multilink_central.axf" - 0 Error(s), 0 Warning(s).
+Load "E:\\Gtron_BLE_module\\nrf51822_6_1_0\\Board\\nrf6310\\s120\\ble_app_multilink_central\\arm\\_build\\ble_app_multilink_central.AXF" 
+Set JLink Project File to "E:\Gtron_BLE_module\nrf51822_6_1_0\Board\nrf6310\s120\ble_app_multilink_central\arm\JLinkSettings.ini"
+* JLink Info: Device "NRF51822_XXAA" selected (257 KB flash, 16 KB RAM).
+ 
+JLink info:
+------------
+DLL: V4.92 , compiled Sep 30 2014 09:33:42
+Firmware: J-Link Lite-Cortex-M V8 compiled Jul 17 2014 11:40:12
+Hardware: V8.00
+S/N : 518107637 
+Feature(s) : GDB 
+ 
+* JLink Info: Found SWD-DP with ID 0x0BB11477
+* JLink Info: Found Cortex-M0 r0p0, Little endian.
+* JLink Info: FPUnit: 4 code (BP) slots and 0 literal slots
+ROMTableAddr = 0xE00FF003
+ 
+Target info:
+------------
+Device: nRF51822_xxAA
+VTarget = 3.261V
+State of Pins: 
+TCK: 0, TDI: 0, TDO: 1, TMS: 1, TRES: 1, TRST: 1
+Hardware-Breakpoints: 4
+Software-Breakpoints: 8192
+Watchpoints:          2
+JTAG speed: 1000 kHz
+ 
+Erase Done.
+Programming Done.
+Verify OK.
+Application running ...

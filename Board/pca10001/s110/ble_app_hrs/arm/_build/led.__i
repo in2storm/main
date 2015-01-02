@@ -1,0 +1,5 @@
+-c --cpu Cortex-M0 --li -g -O3 -Otime --apcs=interwork --enum_is_int -I.. -I..\..\..\..\..\Include -I..\..\..\..\..\Include\app_common -I..\..\..\..\..\Include\ble -I..\..\..\..\..\Include\ble\device_manager -I..\..\..\..\..\Include\ble\ble_services -I..\..\..\..\..\Include\s110 -I..\..\..\..\..\Include\sd_common -I..\..\..\..\..\Include\sdk --c99 
+-I C:\Keil\ARM\RV31\INC 
+-I C:\Keil\ARM\CMSIS\Include 
+-I C:\Keil\ARM\Device\Nordic\nRF51822\Include 
+-DNRF51 -DDEBUG_NRF_USER -DBLE_STACK_SUPPORT_REQD -DBOARD_PCA10001 -DENABLE_DEBUG_LOG_SUPPORT -o ".\_build\led.o" --omf_browse ".\_build\led.crf" --depend ".\_build\led.d" "..\led.c"
