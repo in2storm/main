@@ -237,19 +237,7 @@ printf("[ble_hrs_c_init] 		m_base_uuid_type = %d \r\n",m_base_uuid_type);
     mp_ble_hrs_c->conn_handle     = BLE_CONN_HANDLE_INVALID;
    mp_ble_hrs_c->hrm_cccd_handle = BLE_GATT_HANDLE_INVALID;
 
-		    // Add RX Characteristic.
-    /*err_code = rx_char_add(&m_nus, &nus_init);
-    if (err_code != NRF_SUCCESS)
-    {
-        return err_code;
-    }
 
-    // Add TX Characteristic.
-    err_code = tx_char_add(&m_nus, &nus_init);
-    if (err_code != NRF_SUCCESS)
-    {
-        return err_code;
-    }*/
     return ble_db_discovery_evt_register(&hrs_uuid,
                                          db_discover_evt_handler);
 }
@@ -269,7 +257,7 @@ void ble_hrs_c_on_ble_evt(ble_hrs_c_t * p_ble_hrs_c, const ble_evt_t * p_ble_evt
             break;
 
         case BLE_GATTC_EVT_HVX:
-            on_hvx(p_ble_hrs_c, p_ble_evt);
+            on_hvx(p_ble_hrs_c, p_ble_evt); //data comming from remote device 
             break;
 
         case BLE_GATTC_EVT_WRITE_RSP:
@@ -310,7 +298,7 @@ static uint32_t cccd_configure(uint16_t conn_handle, uint16_t handle_cccd, bool 
 }
 
 
-uint32_t ble_hrs_c_hrm_notif_enable(ble_hrs_c_t * p_ble_hrs_c)
+uint32_t ble_hrs_c_hrm_notif_enable(ble_hrs_c_t * p_ble_hrs_c)  //[simon] for get notif. from remote device.
 {
     if (p_ble_hrs_c == NULL)
     {

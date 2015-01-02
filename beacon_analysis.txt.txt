@@ -1,0 +1,33 @@
+Beacon 예제 실해해보기
+
+SDK의 문서를 보고 비콘 어플리케이션 시작하기 내용이 들어있다.
+Beacon Transmitter Sample Application
+
+ <InstallFolder>\Nordic\nrf51822\Board\pca10001\s110\ble_app_beacon folder.
+
+핵심은 아래 내용이다.
+
+The Beacon Transmitter Sample Application can be tested using the Master Control Panel as follows:
+
+1. Compile and program the application. Observe that the Advertising LED is lit.
+2. After starting discovery in the Master Control Panel main window, observe that the Beacon is advertising with its Bluetooth device address without a Device Name.
+3. Click the plus sign next to the Beacon's address to view the full advertisement data.
+4. Observe that the Advertising Type is 'Non-connectable' and the Manufacturer Specific Data field of the Advertising Data is as follows:
+
+4C-00-02-15-01-12-23-34-45-56-67-78-89-9A-AB-BC-CD-DE-EF-F0-01-02-03-04-C3
+실제로도 이렇게 나왔다.
+
+5. Define the compiler define USE_UICR_FOR_MAJ_MIN_VALUES and recompile and flash.
+Using nrfjprog tool write the value 0xabcd0102 to the UICR register as follows: 
+nrfjprog --snr <Segger-chip-Serial-Number> --memwr 0x10001080 --val 0xabcd0102
+6. Reset the board and observe the bytes in bold below are seen in the Manufacturer Specific Data field of the Advertising Data. This indicates that the Major and Minor values have been picked up from the UICR register written in the above step. 
+xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-xx-AB-CD-01-02-xx
+
+나의 제이링크 번호는 518107637
+
+C:\Program Files\Nordic Semiconductor\nrf51\bin>nrfjprog --snr 518107637 --memwr
+ 0x10001080 --val 0xabcd0102
+Writing address 0x10001080.
+Verifying address 0x10001080.
+Verify OK.
+

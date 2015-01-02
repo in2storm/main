@@ -1,0 +1,535 @@
+
+========== <nrf custom uart centrol mode implementation> =========================
+
+nrf51822 256k 모듈에 기존 구현된 peripheral 장치의 페어링할 수 있는 central 모드
+구현 진행에 따른 기술문서이다.
+
+==================================================================================
+먼저 가장 기본적인 heart rate service(peripheral)과 hrs collector(centrol) 예제를 통해서
+센트럴 모드 구현에 대해 학습니다.
+
+1. 일단 아래 처럼 우리의 보드에 맞게 gpio등 불필요한 부분을 날리면 제대로 동작함을 확인하였다.
+
+
+아래 로그는 콜렉터 예제에서 맨처음 연결이 안될때 로그이다. ios의 nrf toolbox의 HRM 으로 연결해보니
+페리페럴자체가 연결이 안되어서 아무런 센서 데이터가 넘어오지 않아서 연결 실패가 뜨는 경우이다.
+그래서 먼저 peripheral 프로젝트부터 수정했다.
+
+Scanning
+[APPL]: << DM_EVT_DISCONNECTION
+        [APPL]: 180d
+[APPL]: >> DM_EVT_CONNECTION
+[APPL]:[45 2C DE 2B 09 FF]: Connection Established
+[DB]: Starting discovery of service with UUID 0x180d for Connection handle 0
+[APPL]: << DM_EVT_CONNECTION
+[APPL]: >> DM_EVT_DISCONNECTION
+
+hrs peripheral 프로젝트에서 수정사항은 아래의 경로에서 진행하였다.
+E:\Gtron_BLE_module\nrf51822_6_1_0\Board\pca10001\s110\ble_app_hrs
+
+hrs collector central 수정사항은 아래의 경로에서 진행하였다.
+E:\Gtron_BLE_module\nrf51822_6_1_0\Board\nrf6310\s120\ble_app_hrs_c
+
+
+2. 성공할 경우는 아래와 같은 로그가 나온다. 물론 LCD 출력부분을 모두 printf로 대체해서 로그를 뽑은 것이다.
+        [APPL]: 180d
+[APPL]: >> DM_EVT_CONNECTION
+[APPL]:[45 2C DE 2B 09 FF]: Connection Established
+Connected ...
+[DB]: Starting discovery of service with UUID 0x180d for Connection handle 0
+[APPL]: << DM_EVT_CONNECTION
+[DB]: Discovery of service with UUID 0x180d completed with success for Connectionhandle 0
+[DB]: Starting discovery of service with UUID 0x180f for Connection handle 0
+[DB]: Discovery of service with UUID 0x180f completed with success for Connectionhandle 0
+[HRS_C]: Heart Rate Service discovered at peer.
+[HRS_C]: Configuring CCCD. CCCD Handle = 12, Connection Handle = 0
+[HRS_C]: SD Read/Write API returns error. This message sending will be attempted again..
+Heart Rate
+[BAS_C]: Battery Service discovered at peer.
+[APPL]: Battery Service discovered.
+[APPL]: Reading battery level.
+[BAS_C]: SD Read/Write API returns Success..
+[APPL]: Enabling Battery Level Notification.
+[BAS_C]: Configuring CCCD. CCCD Handle = 18, Connection Handle = 0
+[BAS_C]: SD Read/Write API returns error. This message sending will be attempted again..
+[APPL]: Battery Level Read as 100 %
+[BAS_C]: SD Read/Write API returns error. This message sending will be attempted again..
+[APPL]: >> DM_LINK_SECURED_IND
+[APPL]: << DM_LINK_SECURED_IND
+[APPL]: >> DM_EVT_SECURITY_SETUP_COMPLETE
+[HRS_C]: Configuring CCCD. CCCD Handle = 12, Connection Handle = 0
+[HRS_C]: SD Read/Write API returns Success..
+[APPL]: << DM_EVT_SECURITY_SETUP_COMPLETE
+[APPL]: >> DM_EVT_DEVICE_CONTEXT_STORED
+[APPL]: << DM_EVT_DEVICE_CONTEXT_STORED
+[HRS_C]: SD Read/Write API returns Success..
+[BAS_C]: SD Read/Write API returns error. This message sending will be attempted again..
+[BAS_C]: SD Read/Write API returns Success..
+[APPL]: HR Measurement received 180
+[APPL]: Battery Level received 100 %
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: >> DM_EVT_DISCONNECTION
+Disconnected...
+Scanning
+[APPL]: << DM_EVT_DISCONNECTION
+
+일단 centrol모드는 hrs collector를 베이스로 수정하면 되겠다.
+그럴려면 custom uart의 프로파일 정보부터 알아보자. hrs와의 비교를 통해서 프로파일만 변경해주면 가능할 것 같다.!!!
+
+@ nRFDuino
+1. address : (0xF1977DAEFCA1)
+2. Advertising data
+  appearance : 없음
+  UUID16 : 없음
+3. Scan Response Data
+  UUID128 : 0x6E40 0001 B5A3 F393 E0A9 E50E 24DC CA9E
+
+
+@ Nordic_HRM
+1. address : (0xff092BDE2C45)
+2. Advertising data
+   appearance : 0x0341
+   ServicesCompleteList UUID16 : 0x180D, 0x180F, 0x180A
+3. Scan Response Data
+없음
+
+그러면 연결 후의 프로파일 정보를 살펴보자.
+3개의 PrimaryService가 있다.
+PrimaryService Value:00-18, Generic Access 0x1800
+Characteristic Declaration Value 0a-03-00-00-2a Property:Read,Chractistic UUID:0x2A00
+Primay
+
+Nordic_HRM의 경우 4개의 Primary Service가 있다.
+Generic Access ->0x1800
+Heart Rate -> 0x180d
+ Heart Rate Measurement : 0x2a37
+ Heart Rate Sensor Location 0x2a38
+Battery Service -> 0x180f
+ Battery level -> 0x2a19
+Device Info -> 0x180a
+ Manufacturer Name String -> 0x2a29
+
+김승주가 남긴 질문과 답변들
+
+https://devzone.nordicsemi.com/question/17730/how-to-write-central-module-firmware-when-peripheral-is-s110experimentalble_app_uart-example/
+
+UART에서 데이터가 오고 나가는 경로들...
+
+ble_nus_on_ble_evt()에서 BLE_GATTS_EVT_WRITE 이벤트가 오면 on_write()핸들러를 통해서 nus_data_handler() -> simple_uart_put()배출
+uart rx irq -> ble_nus_send_string() -> sd_ble_gatts_hvx(p_nus->conn_handle, &hvx_params);
+
+
+/**
+ * @brief GAP Event IDs.
+ * Those IDs uniquely identify an event coming from the stack to the application.
+ */
+enum BLE_GAP_EVTS
+{
+0x10  BLE_GAP_EVT_CONNECTED  = BLE_GAP_EVT_BASE,    /**< Connection established. */
+0x11  BLE_GAP_EVT_DISCONNECTED,                     /**< Disconnected from peer. */
+0x12  BLE_GAP_EVT_CONN_PARAM_UPDATE,                /**< Connection Parameters updated. */
+4  BLE_GAP_EVT_SEC_PARAMS_REQUEST,               /**< Request to provide security parameters. */
+5  BLE_GAP_EVT_SEC_INFO_REQUEST,                 /**< Request to provide security information. */
+6  BLE_GAP_EVT_PASSKEY_DISPLAY,                  /**< Request to display a passkey to the user. */
+7  BLE_GAP_EVT_AUTH_KEY_REQUEST,                 /**< Request to provide an authentication key. */
+8  BLE_GAP_EVT_AUTH_STATUS,                      /**< Authentication procedure completed with status. */
+9  BLE_GAP_EVT_CONN_SEC_UPDATE,                  /**< Connection security updated. */
+10  BLE_GAP_EVT_TIMEOUT,                          /**< Timeout expired. */
+11  BLE_GAP_EVT_RSSI_CHANGED,                     /**< Signal strength measurement report. */
+12  BLE_GAP_EVT_ADV_REPORT,                       /**< Advertising report. */
+13  BLE_GAP_EVT_SEC_REQUEST,                      /**< Security Request. */
+14  BLE_GAP_EVT_CONN_PARAM_UPDATE_REQUEST,        /**< Connection Parameter Update Request. */
+};
+
+
+#define DM_EVT_CONNECTION              0x11 /**< Indicates that link with the peer is established. */
+#define DM_EVT_DISCONNECTION           0x12 /**< Indicates that link with peer is torn down. */
+#define DM_EVT_SECURITY_SETUP          0x13 /**< Security procedure for link started indication */
+#define DM_EVT_SECURITY_SETUP_COMPLETE 0x14 /**< Security procedure for link completion indication. */
+#define DM_EVT_LINK_SECURED            0x15 /**< Indicates that link with the peer is secured. For bonded devices, subsequent reconnections with bonded peer will result only in this event when the link is secured and setup procedures will not occur unless the bonding information is either lost or deleted on either or both sides.  */
+#define DM_EVT_SECURITY_SETUP_REFRESH  0x16 /**< Indicates that the security on the link was re-established. */
+
+/**
+ * @brief GATT Client Event IDs.
+ */
+enum BLE_GATTC_EVTS
+{
+0x30  BLE_GATTC_EVT_PRIM_SRVC_DISC_RSP = BLE_GATTC_EVT_BASE,  /**< Primary Service Discovery Response event.  */
+0x31  BLE_GATTC_EVT_REL_DISC_RSP,                             /**< Relationship Discovery Response event. */
+0x32  BLE_GATTC_EVT_CHAR_DISC_RSP,                            /**< Characteristic Discovery Response event. */
+0x33  BLE_GATTC_EVT_DESC_DISC_RSP,                            /**< Descriptor Discovery Response event. */
+  BLE_GATTC_EVT_CHAR_VAL_BY_UUID_READ_RSP,                /**< Read By UUID Response event. */
+  BLE_GATTC_EVT_READ_RSP,                                 /**< Read Response event. */
+  BLE_GATTC_EVT_CHAR_VALS_READ_RSP,                       /**< Read multiple Response event. */
+  BLE_GATTC_EVT_WRITE_RSP,                                /**< Write Response event. */
+  BLE_GATTC_EVT_HVX,                                      /**< Handle Value Notification or Indication event. */
+  BLE_GATTC_EVT_TIMEOUT                                   /**< Timeout event. */
+};
+
+
+The ble_app_hrs_c scans for ble devices and advertising reports are received in on_ble_evt->BLE_GAP_EVT_ADV_REPORT. If the heart rate UUID is found (0x180D) a connection is establised with the peripheral. When connection is established, service discovery is performed, and services are enabled automatically.
+
+
+롤에 대한 정의가 필요하다.
+https://devzone.nordicsemi.com/question/232/what-is-a-client-and-server-in-ble/
+
+At Link layer: master - slave relationship
+At GAP layer: central - peripheral relationship
+At GATT layer: client - server relationship
+
+보니까  central이 스캔후에 주변 장치에 연결 요청을 하니까 client가 된다.
+peripheral은 주변에 advertising data를 보내서 자기가 누구인지 알려줄 뿐 요청은 하지 않고 수락만한다. 그래서 server가된다.
+
+central/client/master
+peripheral/server/slave
+가 되는 것이다.
+
+
+이놈으로 똑같이 연결하고자하는 uuid를 등록한다.
+   // Register with discovery module for the discovery of the service.
+    ble_uuid_t uuid;
+
+    uuid.type = m_base_uuid_type;
+    uuid.uuid = MULTILINK_PERIPHERAL_SERVICE_UUID;
+
+    err_code = ble_db_discovery_evt_register(&uuid,
+                                             db_discovery_evt_handler);
+
+
+하트레이트도 마찬가지로 등록이 되었다.
+    ble_uuid_t bas_uuid;
+
+    bas_uuid.type                = BLE_UUID_TYPE_BLE;
+    bas_uuid.uuid                = BLE_UUID_BATTERY_SERVICE;
+    return ble_db_discovery_evt_register(&bas_uuid,
+                                         db_discovery_evt_handler);
+
+이런 서비스에 대한 구조체가 필요하다.
+// Forward declaration of the ble_bas_t type.
+typedef struct ble_bas_c_s ble_bas_c_t;
+/**@brief      Battery Service Client structure.
+
+ */
+typedef struct ble_bas_c_s
+{
+    uint16_t                conn_handle;     /**< Connection handle as provided by the SoftDevice. */
+    uint16_t                bl_cccd_handle;  /**< Handle of the CCCD of the Battery Level characteristic. */
+    uint16_t                bl_handle;       /**< Handle of the Battery Level characteristic as provided by the SoftDevice. */
+    ble_bas_c_evt_handler_t evt_handler;     /**< Application event handler to be called when there is an event related to the Battery service. */
+} ble_bas_c_t;
+
+
+db_discover_evt_handler()여기에 주변 장치들의 이벤트가 올라온다.
+여기에서 주변장치들이 지원하는 서비스를 identify할 수 있다.
+
+    // Check if the Heart Rate Service was discovered.
+    if (p_evt->evt_type == BLE_DB_DISCOVERY_COMPLETE &&
+        p_evt->params.discovered_db.srv_uuid.uuid == BLE_UUID_HEART_RATE_SERVICE &&
+        p_evt->params.discovered_db.srv_uuid.type == BLE_UUID_TYPE_BLE)
+
+이런식으로 식별을 한다.
+
+아래는 hrs의 ble 이벤트 핸들러이다.
+void ble_hrs_c_on_ble_evt(ble_hrs_c_t * p_ble_hrs_c, const ble_evt_t * p_ble_evt)
+{
+    if ((p_ble_hrs_c == NULL) || (p_ble_evt == NULL))
+    {
+        return;
+    }
+
+    switch (p_ble_evt->header.evt_id)
+    {
+        case BLE_GAP_EVT_CONNECTED:
+            p_ble_hrs_c->conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
+            break;
+
+        case BLE_GATTC_EVT_HVX:
+            on_hvx(p_ble_hrs_c, p_ble_evt);
+            break;
+
+        case BLE_GATTC_EVT_WRITE_RSP:
+            on_write_rsp(p_ble_hrs_c, p_ble_evt);
+            break;
+
+        default:
+            break;
+    }
+}
+
+
+아래는 배터리 서비스의 ble 이벤트 핸들러이다. read rsp가 있다.
+void ble_bas_c_on_ble_evt(ble_bas_c_t * p_ble_bas_c, const ble_evt_t * p_ble_evt)
+{
+    if ((p_ble_bas_c == NULL) || (p_ble_evt == NULL))
+    {
+        return;
+    }
+
+    switch (p_ble_evt->header.evt_id)
+    {
+        case BLE_GAP_EVT_CONNECTED:
+            p_ble_bas_c->conn_handle = p_ble_evt->evt.gap_evt.conn_handle;
+            break;
+
+        case BLE_GATTC_EVT_HVX:
+            on_hvx(p_ble_bas_c, p_ble_evt);
+            break;
+
+        case BLE_GATTC_EVT_WRITE_RSP:
+            on_write_rsp(p_ble_bas_c, p_ble_evt);
+            break;
+
+        case BLE_GATTC_EVT_READ_RSP:
+            on_read_rsp(p_ble_bas_c, p_ble_evt);
+            break;
+
+        default:
+            break;
+    }
+}
+
+보니까 밑에 애는 write/read rsp모두에서 후처리를 한다.
+   // Check if there is any buffered transmissions and send them.
+    tx_buffer_process();
+
+
+
+
+
+
+
+
+그냥 다시 hrs로 custom profile을 수정해서 데이터를 주고받는것 해보자.
+그 뒤에 멀티 커넥션으로 시도해보자.
+
+
+        [APPL]: 180d
+[APPL]: >> DM_EVT_CONNECTION
+[APPL]:[45 2C DE 2B 09 FF]: Connection Established
+Connected ...
+[DB]: Starting discovery of service with UUID 0x180d for Connection handle 0
+[APPL]: << DM_EVT_CONNECTION
+[DB]: Discovery of service with UUID 0x180d completed with success for Connectionhandle 0
+[DB]: Starting discovery of service with UUID 0x180f for Connection handle 0
+[DB]: Discovery of service with UUID 0x180f completed with success for Connectionhandle 0
+[HRS_C]: Heart Rate Service discovered at peer.
+[HRS_C]: Configuring CCCD. CCCD Handle = 12, Connection Handle = 0
+[HRS_C]: SD Read/Write API returns error. This message sending will be attempted again..
+[simon] discovery completed...
+[BAS_C]: Battery Service discovered at peer.
+[APPL]: Battery Service discovered.
+[APPL]: Reading battery level.
+[BAS_C]: SD Read/Write API returns Success..
+[APPL]: Enabling Battery Level Notification.
+[BAS_C]: Configuring CCCD. CCCD Handle = 18, Connection Handle = 0
+[BAS_C]: SD Read/Write API returns error. This message sending will be attempted again..
+[APPL]: Battery Level Read as 100 %
+[BAS_C]: SD Read/Write API returns error. This message sending will be attempted again..
+[APPL]: >> DM_LINK_SECURED_IND
+[APPL]: << DM_LINK_SECURED_IND
+[APPL]: >> DM_EVT_SECURITY_SETUP_COMPLETE
+[HRS_C]: Configuring CCCD. CCCD Handle = 12, Connection Handle = 0
+[HRS_C]: SD Read/Write API returns Success..
+[APPL]: << DM_EVT_SECURITY_SETUP_COMPLETE
+[APPL]: >> DM_EVT_DEVICE_CONTEXT_STORED
+[APPL]: << DM_EVT_DEVICE_CONTEXT_STORED
+[HRS_C]: SD Read/Write API returns Success..
+[BAS_C]: SD Read/Write API returns error. This message sending will be attempted again..
+[BAS_C]: SD Read/Write API returns Success..
+[APPL]: HR Measurement received 180
+[APPL]: Battery Level received 100 %
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement received 180
+[APPL]: HR Measurement rece
+
+
+[simon] BLE_GAP_EVT_ADV_REPORT errcode = 5  //not found
+
+
+[simon] BLE_GAP_EVT_ADV_REPORT errcode = 0
+        [APPL]: 526e
+        [APPL]: 4446
+        [APPL]: 6975
+        [APPL]: 6f6e
+
+장치의 연결 작업은 on_ble_evt()에서 대충끝난다.
+start hrs collector
+Scanning
+[simon] BLE_GAP_EVT_ADV_REPORT errcode = 0
+[APPL]: >> DM_EVT_CONNECTION
+[APPL]:[A1 FC AE 7D 97 F1]: Connection Established
+Connected ...
+[DB]: Starting discovery of service with UUID 0x180d for Connection handle 0
+[APPL]: << DM_EVT_CONNECTION
+[DB]: Starting discovery of service with UUID 0x180f for Connection handle 0
+[BAS_C]: Battery Service discovery failure at peer.
+
+
+그 장치에서 제공하는 서비스를 찾는것은 DB에서 시작한다. 그쪽을 디버깅한다. 이작업은 main.c에서 시작한다.
+
+device_manager_event_handler()에서 ble_db_discovery_start()를 호출해서 해당 디바이스를 찾는다.
+
+/**@brief   Structure for holding the information related to the GATT database at the server.
+ *
+ * @details This module identifies a remote database. Use one instance of this structure per 
+ *          connection.
+ *
+ * @warning This structure must be zero-initialized.
+ */
+typedef struct
+{
+    ble_db_discovery_srv_t services[BLE_DB_DISCOVERY_MAX_SRV];  /**< Information related to the current service being discovered. This is intended for internal use during service discovery.*/
+    uint16_t               conn_handle;                         /**< Connection handle as provided by the SoftDevice. */
+    uint8_t                srv_count;                           /**< Number of services at the peers GATT database.*/
+    uint8_t                curr_char_ind;                       /**< Index of the current characteristic being discovered. This is intended for internal use during service discovery.*/
+    uint8_t                curr_srv_ind;                        /**< Index of the current service being discovered. This is intended for internal use during service discovery.*/
+    bool                   discovery_in_progress;               /**< Variable to indicate if there is a service discovery in progress. */
+} ble_db_discovery_t;
+
+위의 구조체를 잘 알고 있어야 할것 같다.
+
+uint32_t sd_ble_uuid_vs_add	(	ble_uuid128_t const *const 	p_vs_uuid,
+uint8_t *const 	p_uuid_type 
+)		
+
+hrs초기화 부분에 아래 코드를 임시로 삽입하니까 DB에서 서비스 찾는 문제는 해결되었다.
+		uint32_t err_code;
+//Custom BLE 
+		ble_uuid128_t base_uuid = MULTILINK_PERIPHERAL_BASE_UUID;
+
+    err_code = sd_ble_uuid_vs_add(&base_uuid, &m_base_uuid_type);
+    //APP_ERROR_CHECK(err_code);
+		
+printf("[ble_hrs_c_init] 		m_base_uuid_type = %d \r\n",m_base_uuid_type);
+    ble_uuid_t hrs_uuid;
+
+    hrs_uuid.type = m_base_uuid_type;//BLE_UUID_TYPE_BLE;
+    hrs_uuid.uuid = BLE_UUID_NUS_SERVICE;//BLE_UUID_HEART_RATE_SERVICE;
+
+
+
+[simon] ble_db_discovery_on_ble_evt 27
+[APPL]: >> DM_EVT_CONNECTION
+[APPL]:[A1 FC AE 7D 97 F1]: Connection Established
+Connected ...
+[DB]: Starting discovery of service with UUID 0x1 for Connection handle 0
+[APPL]: << DM_EVT_CONNECTION
+[simon] ble_db_discovery_on_ble_evt 16
+[simon] ble_db_discovery_on_ble_evt 48
+[simon] ble_db_discovery_on_ble_evt 50
+[simon] ble_db_discovery_on_ble_evt 50
+[simon] ble_db_discovery_on_ble_evt 50
+[simon] ble_db_discovery_on_ble_evt 51
+[simon] ble_db_discovery_on_ble_evt 51
+[DB]: Discovery of service with UUID 0x1 completed with success for Connectionhandle 0
+
+
+여기까지 진행되었다.
+[APPL]:[A1 FC AE 7D 97 F1]: Connection Established
+Connected ...
+[DB]: Starting discovery of service with UUID 0x1 for Connection handle 0
+[APPL]: << DM_EVT_CONNECTION
+[simon] ble_db_discovery_on_ble_evt 16
+[simon] ble_db_discovery_on_ble_evt 48
+[simon] ble_db_discovery_on_ble_evt 50
+[simon] ble_db_discovery_on_ble_evt 50
+[simon] ble_db_discovery_on_ble_evt 50
+[simon] ble_db_discovery_on_ble_evt 51
+[simon] ble_db_discovery_on_ble_evt 51
+[DB]: Discovery of service with UUID 0x1 completed with success for Connectionhandle 0
+[HRS_C]: Heart Rate Service discovered at peer.
+[HRS_C]: Configuring CCCD. CCCD Handle = 0, Connection Handle = 0
+[HRS_C]: SD Read/Write API returns Success..
+[simon] discovery completed...
+[APPL]: >> DM_EVT_DISCONNECTION
+Disconnected...
+Scanning
+[APPL]: << DM_EVT_DISCONNECTION
+[simon] ble_db_discovery_on_ble_evt 17
+
+
+CCCD = Client Characteristic Configuration Descriptor
+
+
+cccd를 이용해서 데이터를 주고받는 매커니즘이 뭘까....alert서비스도 이걸이용해서 데이터를 주고 받고
+hrs도 마찬가지로 저것을 이용했다.
+
+CCCD is an abbreviation for Client Characteristic Configuration Descriptor. This descriptor is defined in the Core Specification, Volume 3, Part G, section 3.3.3.3.
+
+This descriptor will be added automatically by the S110 softdevice for any characteristic that has either the Notify or the Indicate properties. In your characteristic setup you will however have to set up the metadata you want for this descriptor, for example which security level is required to write it.
+
+The use of it is for a GATT Client to control what kind of packets the GATT Server can send to it. As you may know, there are some so-called server initiated properties, Notifications and Indications (part F, 3.4.7). A Server can only send such packets to the Client if the Client have written either 1 (to enable notifications) or 2 (to enable indications) to the CCCD for the characteristic in question.
+
+
+그런데 uart_ble는 아니다. 
+sd_ble_gatts_value_set() //GATT의 값을 set한다.
+
+
+https://devzone.nordicsemi.com/question/14353/a-question-about-cccd/
+
+========================================================================================================
+ble_nus_on_ble_evt()에서 BLE_GATTS_EVT_WRITE 이벤트가 오면 on_write()핸들러를 통해서 nus_data_handler() -> simple_uart_put()배출
+uart rx irq -> ble_nus_send_string() -> sd_ble_gatts_hvx(p_nus->conn_handle, &hvx_params);
+
+정리해보면 지금까지 했던 ble-uart는 GATT Server이고 아래와 같이 TX/RX를 수행해왔다.
+PC -> 스마트폰 : Notification
+PC <- 스마트폰 : GATT WRITE Operation(Write without response)
+
+그러면 GATT Client로 구현해야되네..젠장.
+
+로컬DB에 characteristic을 만드는 API
+sd_ble_gatts_characteristic_add()
+마찬가지로 로컬 DB에 service를 추가흐는 함수
+
+sd_ble_gatts_service_add()
+
+이젠 익숙해졌다. 상대방에게 noti를 보낼때는 아래 hvx로 보낸다.
+sd_ble_gatts_hvx()
+
+우리가 쓰는 uart 서비스의 구조체이다.
+
+/**@brief   Nordic UART Service structure.
+ *
+ * @details This structure contains status information related to the service.
+ */
+typedef struct ble_nus_s
+{
+    uint8_t                  uuid_type;               /**< UUID type for Nordic UART Service Base UUID. */
+    uint16_t                 service_handle;          /**< Handle of Nordic UART Service (as provided by the S110 SoftDevice). */
+    ble_gatts_char_handles_t tx_handles;              /**< Handles related to the TX characteristic. (as provided by the S110 SoftDevice)*/
+    ble_gatts_char_handles_t rx_handles;              /**< Handles related to the RX characteristic. (as provided by the S110 SoftDevice)*/
+    uint16_t                 conn_handle;             /**< Handle of the current connection (as provided by the S110 SoftDevice). This will be BLE_CONN_HANDLE_INVALID if not in a connection. */
+    bool                     is_notification_enabled; /**< Variable to indicate if the peer has enabled notification of the RX characteristic.*/
+    ble_nus_data_handler_t   data_handler;            /**< Event handler to be called for handling received data. */
+} ble_nus_t;
+
+
+안드로이드 uart app를 보면 어떻게 데이터를 처리해야할지 고민해보자.
+
+6E400001-B5A3-F393-E0A9-E50E24DCCA9E for the Service
+6E400002-B5A3-F393-E0A9-E50E24DCCA9E for the TX Characteristic
+Property = Notify
+6E400003-B5A3-F393-E0A9-E50E24DCCA9E for the RX Characteristic
+Property = Write without response
+
+여기에 이클립스로 프로젝트 구성하는 방법이 잘 설명되어 있다.
+http://embeddedsoftdev.blogspot.ca/p/ehal-nrf51.html
+
+
